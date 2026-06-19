@@ -45,6 +45,12 @@ languages_priority:
 notification:
   max_items_per_message: 10
 
+openai:
+  enabled: true
+  model: "gpt-5-nano"
+  summary_language: "pt-BR"
+  max_summaries_per_run: 0
+
 sources:
   openalex:
     enabled: true
@@ -52,6 +58,7 @@ sources:
 ```
 
 `Semantic Scholar` aceita a variável de ambiente opcional `SEMANTIC_SCHOLAR_API_KEY`.
+Resumos com OpenAI sao opcionais e usam apenas titulo, abstract e metadados disponiveis, nunca o PDF completo.
 
 ## Telegram
 
@@ -68,11 +75,25 @@ Crie um arquivo `.env` na raiz do projeto:
 ```env
 TELEGRAM_BOT_TOKEN=seu_token
 TELEGRAM_CHAT_IDS=5291018127,-1001234567890
+OPENAI_API_KEY=sua_chave_openai
 ```
 
 Use `TELEGRAM_CHAT_IDS` com ids separados por virgula. O mesmo conjunto de artigos sera enviado para todos os chats, e um paper so sera marcado como notificado quando todos os chats da lista receberem a mensagem com sucesso.
 
 O `.env` nao deve ser versionado. Se o token do bot tiver sido exposto, gere um novo no `@BotFather` antes de usar em producao.
+
+## Resumo opcional com OpenAI
+
+Se `OPENAI_API_KEY` estiver configurada e `openai.enabled: true`, o projeto gera um resumo curto em portugues apenas para artigos novos com abstract.
+
+Para desligar a funcionalidade:
+
+```yaml
+openai:
+  enabled: false
+```
+
+`max_summaries_per_run: 0` significa sem limite pratico por execucao.
 
 ## GitHub Actions
 
@@ -93,6 +114,7 @@ No repositorio do GitHub:
 4. `TELEGRAM_BOT_TOKEN`
 5. `TELEGRAM_CHAT_IDS`
 6. `SEMANTIC_SCHOLAR_API_KEY` (opcional, mas recomendado para reduzir rate limit)
+7. `OPENAI_API_KEY` (opcional, necessario apenas para a etapa de resumo)
 
 ### Rodar manualmente no GitHub
 

@@ -28,6 +28,9 @@ def format_paper(paper: Paper, index: int, html: bool = False) -> str:
     doi = paper.doi or "nao encontrado"
     pdf_status = "disponivel" if paper.pdf_url else "nao encontrado"
     link = paper.url or "nao encontrado"
+    summary = paper.summary_pt
+    contribution = paper.summary_contribution
+    limitations = paper.summary_limitations
 
     if html:
         title = escape(paper.title)
@@ -37,26 +40,42 @@ def format_paper(paper: Paper, index: int, html: bool = False) -> str:
         doi = escape(doi)
         pdf_status = escape(pdf_status)
         links = _format_links_html(paper)
-
-        return (
+        summary = escape(summary) if summary else None
+        contribution = escape(contribution) if contribution else None
+        limitations = escape(limitations) if limitations else None
+        lines = [
             f"<b>{index}. {title}</b>\n"
-            f"<b>Fonte:</b> {source}\n"
-            f"<b>Publicado:</b> {published}\n"
-            f"<b>Autores:</b> {authors}\n"
-            f"<b>DOI:</b> {doi}\n"
-            f"<b>PDF:</b> {pdf_status}\n"
-            f"<b>Links:</b> {links}"
-        )
+            f"<b>Fonte:</b> {source}",
+            f"<b>Publicado:</b> {published}",
+            f"<b>Autores:</b> {authors}",
+            f"<b>DOI:</b> {doi}",
+            f"<b>PDF:</b> {pdf_status}",
+        ]
+        if summary:
+            lines.append(f"<b>Resumo:</b> {summary}")
+        if contribution:
+            lines.append(f"<b>Contribuicao:</b> {contribution}")
+        if limitations:
+            lines.append(f"<b>Limitacao:</b> {limitations}")
+        lines.append(f"<b>Links:</b> {links}")
+        return "\n".join(lines)
 
-    return (
-        f"{index}. {paper.title}\n"
-        f"Fonte: {paper.source}\n"
-        f"Publicado: {published}\n"
-        f"Autores: {authors}\n"
-        f"DOI: {doi}\n"
-        f"PDF: {pdf_status}\n"
-        f"Link: {link}"
-    )
+    lines = [
+        f"{index}. {paper.title}",
+        f"Fonte: {paper.source}",
+        f"Publicado: {published}",
+        f"Autores: {authors}",
+        f"DOI: {doi}",
+        f"PDF: {pdf_status}",
+    ]
+    if summary:
+        lines.append(f"Resumo: {summary}")
+    if contribution:
+        lines.append(f"Contribuicao: {contribution}")
+    if limitations:
+        lines.append(f"Limitacao: {limitations}")
+    lines.append(f"Link: {link}")
+    return "\n".join(lines)
 
 
 def format_daily_messages(

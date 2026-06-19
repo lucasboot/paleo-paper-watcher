@@ -28,6 +28,14 @@ telegram:
 notification:
   max_items_per_message: 10
 
+openai:
+  enabled: true
+  model: "gpt-5-nano"
+  summary_language: "pt-BR"
+  max_summaries_per_run: 0
+  reasoning_effort: "low"
+  max_output_tokens: 1200
+
 sources:
   openalex:
     enabled: true

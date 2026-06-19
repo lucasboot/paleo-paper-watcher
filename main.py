@@ -10,6 +10,7 @@ from src.notify.telegram import get_chat_ids
 from src.normalize import dedupe_key
 from src.state import load_seen_keys, save_seen_keys
 from src.sources import SOURCE_MODULES
+from src.summarize import summarize_papers
 
 SOURCE_ORDER = ("openalex", "crossref", "semantic_scholar", "arxiv")
 SOURCE_CONCURRENCY = {
@@ -104,6 +105,8 @@ async def main() -> None:
     if not new_papers:
         print("Nenhuma novidade encontrada.")
         return
+
+    new_papers = await summarize_papers(new_papers, config)
 
     paper_chunks = chunk_papers(new_papers, config.notification.max_items_per_message)
     plain_messages = format_daily_messages(

@@ -16,4 +16,8 @@ class Paper(BaseModel):
     pdf_url: str | None = None
     abstract: str | None = None
     venue: str | None = None
+    summary_pt: str | None = None
+    summary_contribution: str | None = None
+    summary_confidence: str | None = None
+    summary_limitations: str | None = None
     raw: dict[str, Any] = Field(default_factory=dict)
