@@ -24,7 +24,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Execução
+## Execução local
 
 ```bash
 python main.py
@@ -71,3 +71,38 @@ TELEGRAM_CHAT_ID=seu_chat_id
 ```
 
 O `.env` nao deve ser versionado. Se o token do bot tiver sido exposto, gere um novo no `@BotFather` antes de usar em producao.
+
+## GitHub Actions
+
+O workflow diario fica em [.github/workflows/daily.yml](/home/lucas-alves/Documents/paleo-paper-watcher/.github/workflows/daily.yml) e roda:
+
+- automaticamente todos os dias as `11:00 UTC`
+- manualmente via `workflow_dispatch`
+
+No fuso `America/Fortaleza (UTC-3)`, `11:00 UTC` corresponde a `08:00`.
+
+### Configurar secrets
+
+No repositorio do GitHub:
+
+1. Abra `Settings`.
+2. Abra `Secrets and variables` > `Actions`.
+3. Crie os secrets:
+4. `TELEGRAM_BOT_TOKEN`
+5. `TELEGRAM_CHAT_ID`
+6. `SEMANTIC_SCHOLAR_API_KEY` (opcional, mas recomendado para reduzir rate limit)
+
+### Rodar manualmente no GitHub
+
+1. Abra a aba `Actions`.
+2. Selecione `Daily Paleo Paper Watcher`.
+3. Clique em `Run workflow`.
+4. Escolha a branch e execute.
+
+### Alterar queries
+
+As queries monitoradas ficam em [config.yaml](/home/lucas-alves/Documents/paleo-paper-watcher/config.yaml). Edite a lista `queries:` e faça commit normalmente. O proximo agendamento usara essa configuracao.
+
+### Persistencia do estado
+
+Ao final da execucao, o workflow tenta commitar `data/seen.json` de volta ao repositorio se ele tiver mudado. Isso evita alertas duplicados entre runs agendados.
