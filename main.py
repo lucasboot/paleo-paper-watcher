@@ -108,12 +108,12 @@ async def main() -> None:
     plain_messages = format_daily_messages(
         new_papers,
         max_items_per_message=config.notification.max_items_per_message,
-        markdown=False,
+        html=False,
     )
-    markdown_messages = format_daily_messages(
+    html_messages = format_daily_messages(
         new_papers,
         max_items_per_message=config.notification.max_items_per_message,
-        markdown=True,
+        html=True,
     )
 
     if not os.getenv("TELEGRAM_BOT_TOKEN", "").strip() or not os.getenv("TELEGRAM_CHAT_ID", "").strip():
@@ -124,7 +124,7 @@ async def main() -> None:
             print(message)
         return
 
-    sent_message_count = await send_messages(markdown_messages)
+    sent_message_count = await send_messages(html_messages)
 
     if sent_message_count == 0:
         return

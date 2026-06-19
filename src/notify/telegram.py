@@ -70,14 +70,14 @@ async def send_messages(messages: list[str]) -> int:
     async with httpx.AsyncClient(timeout=30.0) as client:
         for message in messages:
             try:
-                markdown_ok = await _post_message(
+                html_ok = await _post_message(
                     client=client,
                     bot_token=bot_token,
                     chat_id=chat_id,
                     message=message,
-                    parse_mode="MarkdownV2",
+                    parse_mode="HTML",
                 )
-                if markdown_ok:
+                if html_ok:
                     sent_count += 1
                     continue
 
@@ -92,7 +92,7 @@ async def send_messages(messages: list[str]) -> int:
                     sent_count += 1
                     continue
 
-                LOGGER.warning("Telegram send failed after Markdown fallback.")
+                LOGGER.warning("Telegram send failed after HTML fallback.")
                 break
             except Exception as exc:
                 LOGGER.warning("Telegram send failed: %s", exc)
