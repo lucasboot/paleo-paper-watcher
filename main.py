@@ -6,6 +6,7 @@ from src.config import load_config
 from src.formatters import format_daily_messages
 from src.models import Paper
 from src.notify import load_dotenv, send_messages
+from src.notify.telegram import get_chat_ids
 from src.normalize import dedupe_key
 from src.state import load_seen_keys, save_seen_keys
 from src.sources import SOURCE_MODULES
@@ -116,7 +117,7 @@ async def main() -> None:
         html=True,
     )
 
-    if not os.getenv("TELEGRAM_BOT_TOKEN", "").strip() or not os.getenv("TELEGRAM_CHAT_ID", "").strip():
+    if not os.getenv("TELEGRAM_BOT_TOKEN", "").strip() or not get_chat_ids():
         print("Telegram nao foi configurado. Imprimindo mensagens no terminal.")
         for index, message in enumerate(plain_messages):
             if index > 0:

@@ -54,11 +54,19 @@ async def _post_message(
     return False
 
 
+def get_chat_ids() -> list[str]:
+    raw_value = os.getenv("TELEGRAM_CHAT_IDS", "").strip()
+    if not raw_value:
+        return []
+
+    return [chat_id.strip() for chat_id in raw_value.split(",") if chat_id.strip()]
+
+
 async def send_messages(messages: list[str]) -> int:
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
-    chat_id = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+    chat_ids = get_chat_ids()
 
-    if not bot_token or not chat_id:
+    if not bot_token or not chat_ids:
         print("Telegram nao foi configurado. Imprimindo mensagens no terminal.")
         for index, message in enumerate(messages):
             if index > 0:
@@ -70,30 +78,36 @@ async def send_messages(messages: list[str]) -> int:
     async with httpx.AsyncClient(timeout=30.0) as client:
         for message in messages:
             try:
-                html_ok = await _post_message(
-                    client=client,
-                    bot_token=bot_token,
-                    chat_id=chat_id,
-                    message=message,
-                    parse_mode="HTML",
-                )
-                if html_ok:
-                    sent_count += 1
-                    continue
+                delivered_to_all = True
+                for chat_id in chat_ids:
+                    html_ok = await _post_message(
+                        client=client,
+                        bot_token=bot_token,
+                        chat_id=chat_id,
+                        message=message,
+                        parse_mode="HTML",
+                    )
+                    if html_ok:
+                        continue
 
-                plain_ok = await _post_message(
-                    client=client,
-                    bot_token=bot_token,
-                    chat_id=chat_id,
-                    message=message,
-                    parse_mode=None,
-                )
-                if plain_ok:
-                    sent_count += 1
-                    continue
+                    plain_ok = await _post_message(
+                        client=client,
+                        bot_token=bot_token,
+                        chat_id=chat_id,
+                        message=message,
+                        parse_mode=None,
+                    )
+                    if plain_ok:
+                        continue
 
-                LOGGER.warning("Telegram send failed after HTML fallback.")
-                break
+                    LOGGER.warning("Telegram send failed for chat_id=%s after HTML fallback.", chat_id)
+                    delivered_to_all = False
+                    break
+
+                if not delivered_to_all:
+                    break
+
+                sent_count += 1
             except Exception as exc:
                 LOGGER.warning("Telegram send failed: %s", exc)
                 break

@@ -67,8 +67,10 @@ Crie um arquivo `.env` na raiz do projeto:
 
 ```env
 TELEGRAM_BOT_TOKEN=seu_token
-TELEGRAM_CHAT_ID=seu_chat_id
+TELEGRAM_CHAT_IDS=5291018127,-1001234567890
 ```
+
+Use `TELEGRAM_CHAT_IDS` com ids separados por virgula. O mesmo conjunto de artigos sera enviado para todos os chats, e um paper so sera marcado como notificado quando todos os chats da lista receberem a mensagem com sucesso.
 
 O `.env` nao deve ser versionado. Se o token do bot tiver sido exposto, gere um novo no `@BotFather` antes de usar em producao.
 
@@ -89,7 +91,7 @@ No repositorio do GitHub:
 2. Abra `Secrets and variables` > `Actions`.
 3. Crie os secrets:
 4. `TELEGRAM_BOT_TOKEN`
-5. `TELEGRAM_CHAT_ID`
+5. `TELEGRAM_CHAT_IDS`
 6. `SEMANTIC_SCHOLAR_API_KEY` (opcional, mas recomendado para reduzir rate limit)
 
 ### Rodar manualmente no GitHub
