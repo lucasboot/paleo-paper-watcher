@@ -1,9 +1,11 @@
 import asyncio
 import logging
+import os
 
 from src.config import load_config
 from src.formatters import format_daily_messages
 from src.models import Paper
+from src.notify import load_dotenv, send_messages
 from src.normalize import dedupe_key
 from src.state import load_seen_keys, save_seen_keys
 from src.sources import SOURCE_MODULES
@@ -62,8 +64,13 @@ def filter_new_papers(papers: list[Paper], seen_keys: set[str]) -> list[Paper]:
     return [paper for paper in papers if dedupe_key(paper) not in seen_keys]
 
 
+def chunk_papers(papers: list[Paper], chunk_size: int) -> list[list[Paper]]:
+    return [papers[start : start + chunk_size] for start in range(0, len(papers), chunk_size)]
+
+
 async def main() -> None:
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s: %(message)s")
+    load_dotenv(".env")
     config = load_config("config.yaml")
     seen_keys = load_seen_keys("data/seen.json")
 
@@ -97,17 +104,37 @@ async def main() -> None:
         print("Nenhuma novidade encontrada.")
         return
 
-    messages = format_daily_messages(
+    paper_chunks = chunk_papers(new_papers, config.notification.max_items_per_message)
+    plain_messages = format_daily_messages(
         new_papers,
         max_items_per_message=config.notification.max_items_per_message,
+        markdown=False,
+    )
+    markdown_messages = format_daily_messages(
+        new_papers,
+        max_items_per_message=config.notification.max_items_per_message,
+        markdown=True,
     )
 
-    for index, message in enumerate(messages):
-        if index > 0:
-            print()
-        print(message)
+    if not os.getenv("TELEGRAM_BOT_TOKEN", "").strip() or not os.getenv("TELEGRAM_CHAT_ID", "").strip():
+        print("Telegram nao foi configurado. Imprimindo mensagens no terminal.")
+        for index, message in enumerate(plain_messages):
+            if index > 0:
+                print()
+            print(message)
+        return
 
-    seen_keys.update(dedupe_key(paper) for paper in new_papers)
+    sent_message_count = await send_messages(markdown_messages)
+
+    if sent_message_count == 0:
+        return
+
+    delivered_papers = [
+        paper
+        for chunk in paper_chunks[:sent_message_count]
+        for paper in chunk
+    ]
+    seen_keys.update(dedupe_key(paper) for paper in delivered_papers)
     save_seen_keys("data/seen.json", seen_keys)
 
 

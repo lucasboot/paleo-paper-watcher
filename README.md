@@ -30,18 +30,44 @@ pip install -r requirements.txt
 python main.py
 ```
 
-O script consulta todas as fontes habilitadas em `config.yaml`, agrega os resultados, remove duplicados por DOI/`external_id`/título normalizado e imprime `title | source | published_date | url`.
+O script consulta as fontes habilitadas em `config.yaml`, agrega os resultados, remove duplicados por DOI/`external_id`/titulo normalizado, gera mensagens em blocos e tenta enviar pelo Telegram. Se o Telegram nao estiver configurado, ele imprime as mensagens no terminal.
 
 ## Configuração
 
 Cada fonte pode ser habilitada e ajustada separadamente:
 
 ```yaml
+max_results_per_source: 20
+languages_priority:
+  - en
+  - pt
+
+notification:
+  max_items_per_message: 10
+
 sources:
   openalex:
     enabled: true
-    lookback_days: 30
-    max_results: 25
+    lookback_days: 3
 ```
 
 `Semantic Scholar` aceita a variável de ambiente opcional `SEMANTIC_SCHOLAR_API_KEY`.
+
+## Telegram
+
+Crie o bot com o `@BotFather`, use `/newbot` e copie o token gerado.
+
+Para obter o `chat_id`:
+
+1. Inicie uma conversa com o bot e envie qualquer mensagem.
+2. Abra `https://api.telegram.org/bot<SEU_TOKEN>/getUpdates`.
+3. Leia o campo `message.chat.id` da conversa desejada.
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+TELEGRAM_BOT_TOKEN=seu_token
+TELEGRAM_CHAT_ID=seu_chat_id
+```
+
+O `.env` nao deve ser versionado. Se o token do bot tiver sido exposto, gere um novo no `@BotFather` antes de usar em producao.
