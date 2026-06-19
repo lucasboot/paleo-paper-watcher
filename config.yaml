@@ -1,0 +1,27 @@
+queries:
+  - paleopalynology
+  - palaeopalynology
+  - fossil pollen
+  - fossil spores
+
+telegram:
+  bot_token: ""
+  chat_id: ""
+
+sources:
+  openalex:
+    enabled: true
+    lookback_days: 30
+    max_results: 25
+  crossref:
+    enabled: true
+    lookback_days: 30
+    max_results: 25
+  semantic_scholar:
+    enabled: true
+    lookback_days: 30
+    max_results: 25
+  arxiv:
+    enabled: true
+    lookback_days: 30
+    max_results: 25
