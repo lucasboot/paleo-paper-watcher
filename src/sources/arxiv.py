@@ -63,6 +63,7 @@ def _to_paper(entry: ET.Element) -> Paper:
         title=raw.get("title") or "Untitled",
         authors=[author for author in raw.get("authors", []) if author],
         published_date=parse_date(raw.get("published")),
+        language=None,
         doi=doi,
         url=raw.get("id"),
         pdf_url=raw.get("pdf_url"),

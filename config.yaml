@@ -1,27 +1,43 @@
+max_results_per_source: 20
+languages_priority:
+  - en
+  - pt
+
 queries:
   - paleopalynology
   - palaeopalynology
+  - paleopalinologia
+  - palaeopalinologia
+  - palynology fossil
   - fossil pollen
   - fossil spores
+  - palynomorphs
+  - palynostratigraphy
+  - pollen biostratigraphy
+  - dinoflagellate cysts
+  - acritarchs
+  - chitinozoans
+  - scolecodonts
+  - quaternary palynology
+  - pre-quaternary palynology
 
 telegram:
   bot_token: ""
   chat_id: ""
 
+notification:
+  max_items_per_message: 10
+
 sources:
   openalex:
     enabled: true
-    lookback_days: 30
-    max_results: 25
+    lookback_days: 3
   crossref:
     enabled: true
-    lookback_days: 30
-    max_results: 25
+    lookback_days: 3
   semantic_scholar:
     enabled: true
-    lookback_days: 30
-    max_results: 25
+    lookback_days: 3
   arxiv:
     enabled: true
-    lookback_days: 30
-    max_results: 25
+    lookback_days: 3

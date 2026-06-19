@@ -62,6 +62,7 @@ def _to_paper(item: dict[str, Any]) -> Paper:
             if authorship.get("author", {}).get("display_name")
         ],
         published_date=parse_date(item.get("publication_date")),
+        language=item.get("language"),
         doi=doi,
         url=primary_location.get("landing_page_url") or item.get("id"),
         pdf_url=primary_location.get("pdf_url") or _extract_pdf_url(item.get("locations")),

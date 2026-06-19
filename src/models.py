@@ -10,6 +10,7 @@ class Paper(BaseModel):
     title: str
     authors: list[str] = Field(default_factory=list)
     published_date: date | None = None
+    language: str | None = None
     doi: str | None = None
     url: str | None = None
     pdf_url: str | None = None

@@ -2,8 +2,10 @@ import asyncio
 import logging
 
 from src.config import load_config
+from src.formatters import format_daily_messages
 from src.models import Paper
 from src.normalize import dedupe_key
+from src.state import load_seen_keys, save_seen_keys
 from src.sources import SOURCE_MODULES
 
 SOURCE_ORDER = ("openalex", "crossref", "semantic_scholar", "arxiv")
@@ -28,6 +30,20 @@ async def run_source(source_name: str, query: str, lookback_days: int, max_resul
         return []
 
 
+def language_rank(language: str | None, priorities: list[str]) -> int:
+    if not language:
+        return len(priorities)
+
+    normalized = language.strip().lower()
+    for index, priority in enumerate(priorities):
+        if normalized == priority.lower():
+            return index
+        if normalized.startswith(f"{priority.lower()}-"):
+            return index
+
+    return len(priorities)
+
+
 def dedupe_papers(papers: list[Paper]) -> list[Paper]:
     seen_keys: set[str] = set()
     unique_papers: list[Paper] = []
@@ -42,9 +58,14 @@ def dedupe_papers(papers: list[Paper]) -> list[Paper]:
     return unique_papers
 
 
+def filter_new_papers(papers: list[Paper], seen_keys: set[str]) -> list[Paper]:
+    return [paper for paper in papers if dedupe_key(paper) not in seen_keys]
+
+
 async def main() -> None:
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s: %(message)s")
     config = load_config("config.yaml")
+    seen_keys = load_seen_keys("data/seen.json")
 
     tasks = []
     for query in config.queries:
@@ -57,21 +78,37 @@ async def main() -> None:
                     source_name=source_name,
                     query=query,
                     lookback_days=source_config.lookback_days,
-                    max_results=source_config.max_results,
+                    max_results=config.max_results_per_source,
                 )
             )
 
     results = await asyncio.gather(*tasks)
     papers = dedupe_papers([paper for batch in results for paper in batch])
     papers.sort(
-        key=lambda paper: (paper.published_date is not None, paper.published_date),
-        reverse=True,
+        key=lambda paper: (
+            language_rank(paper.language, config.languages_priority),
+            -(paper.published_date.toordinal() if paper.published_date else -1),
+            paper.title.lower(),
+        ),
+    )
+    new_papers = filter_new_papers(papers, seen_keys)
+
+    if not new_papers:
+        print("Nenhuma novidade encontrada.")
+        return
+
+    messages = format_daily_messages(
+        new_papers,
+        max_items_per_message=config.notification.max_items_per_message,
     )
 
-    for paper in papers:
-        published = paper.published_date.isoformat() if paper.published_date else "unknown-date"
-        url = paper.url or "-"
-        print(f"{paper.title} | {paper.source} | {published} | {url}")
+    for index, message in enumerate(messages):
+        if index > 0:
+            print()
+        print(message)
+
+    seen_keys.update(dedupe_key(paper) for paper in new_papers)
+    save_seen_keys("data/seen.json", seen_keys)
 
 
 if __name__ == "__main__":

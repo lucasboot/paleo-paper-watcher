@@ -9,15 +9,21 @@ class TelegramConfig(BaseModel):
     chat_id: str = ""
 
 
+class NotificationConfig(BaseModel):
+    max_items_per_message: int = 10
+
+
 class SourceConfig(BaseModel):
     enabled: bool = True
-    lookback_days: int = 30
-    max_results: int = 25
+    lookback_days: int = 3
 
 
 class AppConfig(BaseModel):
+    max_results_per_source: int = 20
+    languages_priority: list[str] = Field(default_factory=lambda: ["en", "pt"])
     queries: list[str] = Field(default_factory=list)
     telegram: TelegramConfig = Field(default_factory=TelegramConfig)
+    notification: NotificationConfig = Field(default_factory=NotificationConfig)
     sources: dict[str, SourceConfig] = Field(default_factory=dict)
 
     def get_source_config(self, source_name: str) -> SourceConfig:

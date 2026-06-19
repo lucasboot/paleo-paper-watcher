@@ -97,9 +97,14 @@ def normalize_doi(value: str | None) -> str | None:
 
 def filter_recent_papers(papers: list, lookback_days: int) -> list:
     cutoff = cutoff_date_for(lookback_days)
+    today = datetime.now(UTC).date()
     filtered = []
     for paper in papers:
-        if paper.published_date is None or paper.published_date >= cutoff:
+        if paper.published_date is None:
+            filtered.append(paper)
+            continue
+
+        if cutoff <= paper.published_date <= today:
             filtered.append(paper)
     return filtered
 

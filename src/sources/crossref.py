@@ -60,6 +60,7 @@ def _to_paper(item: dict[str, Any]) -> Paper:
         title=title,
         authors=_extract_authors(item),
         published_date=_extract_published_date(item),
+        language=item.get("language"),
         doi=doi,
         url=item.get("URL"),
         pdf_url=_extract_pdf_url(item),

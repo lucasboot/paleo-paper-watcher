@@ -54,6 +54,7 @@ def _to_paper(item: dict[str, Any]) -> Paper:
         title=item.get("title") or "Untitled",
         authors=[author.get("name") for author in item.get("authors", []) if author.get("name")],
         published_date=published_date,
+        language=item.get("language"),
         doi=doi,
         url=item.get("url"),
         pdf_url=open_access_pdf.get("url"),
