@@ -5,21 +5,16 @@ languages_priority:
 
 queries:
   - paleopalynology
-  - palaeopalynology
   - paleopalinologia
-  - palaeopalinologia
-  - palynology fossil
-  - fossil pollen
-  - fossil spores
   - palynomorphs
   - palynostratigraphy
-  - pollen biostratigraphy
   - dinoflagellate cysts
   - acritarchs
   - chitinozoans
-  - scolecodonts
-  - quaternary palynology
-  - pre-quaternary palynology
+  - bacia potiguar
+  - formação alagamar
+  - alagamar formation
+  - potiguar basin
 
 telegram:
   bot_token: ""
