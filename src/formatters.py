@@ -4,6 +4,7 @@ from html import escape
 from datetime import date, datetime
 
 from src.models import Paper
+from src.normalize import dedupe_key
 
 
 def _format_links_html(paper: Paper) -> str:
@@ -22,12 +23,20 @@ def _format_links_html(paper: Paper) -> str:
     return " | ".join(links) if links else "nao encontrado"
 
 
-def format_paper(paper: Paper, index: int, html: bool = False) -> str:
+def format_paper(
+    paper: Paper,
+    index: int,
+    html: bool = False,
+    queries: list[str] | None = None,
+    relevance_summary: str | None = None,
+) -> str:
     published = paper.published_date.isoformat() if paper.published_date else "desconhecido"
     authors = ", ".join(paper.authors) if paper.authors else "nao informado"
     doi = paper.doi or "nao encontrado"
     pdf_status = "disponivel" if paper.pdf_url else "nao encontrado"
     link = paper.url or "nao encontrado"
+    query_line = f"\nQuery(s): {', '.join(queries)}" if queries and not html else ""
+    relevance_line = f"\nRelevancia: {relevance_summary}" if relevance_summary else ""
 
     if html:
         title = escape(paper.title)
@@ -46,6 +55,7 @@ def format_paper(paper: Paper, index: int, html: bool = False) -> str:
             f"<b>DOI:</b> {doi}\n"
             f"<b>PDF:</b> {pdf_status}\n"
             f"<b>Links:</b> {links}"
+            f"{escape(relevance_line)}"
         )
 
     return (
@@ -56,6 +66,8 @@ def format_paper(paper: Paper, index: int, html: bool = False) -> str:
         f"DOI: {doi}\n"
         f"PDF: {pdf_status}\n"
         f"Link: {link}"
+        f"{query_line}"
+        f"{relevance_line}"
     )
 
 
@@ -64,6 +76,8 @@ def format_daily_messages(
     max_items_per_message: int,
     run_date: date | None = None,
     html: bool = False,
+    queries_by_paper: dict[str, list[str]] | None = None,
+    relevance_by_paper: dict[str, str] | None = None,
 ) -> list[str]:
     if not papers:
         return []
@@ -84,7 +98,13 @@ def format_daily_messages(
     for start in range(0, len(papers), max_items_per_message):
         chunk = papers[start : start + max_items_per_message]
         body = "\n\n".join(
-            format_paper(paper, index, html=html)
+            format_paper(
+                paper,
+                index,
+                html=html,
+                queries=(queries_by_paper or {}).get(dedupe_key(paper)),
+                relevance_summary=(relevance_by_paper or {}).get(dedupe_key(paper)),
+            )
             for index, paper in enumerate(chunk, start=start + 1)
         )
         messages.append(f"{header}\n\n{body}")

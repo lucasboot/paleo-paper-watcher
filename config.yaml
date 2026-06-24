@@ -4,17 +4,284 @@ languages_priority:
   - pt
 
 queries:
-  - paleopalynology
-  - paleopalinologia
-  - palynomorphs
-  - palynostratigraphy
-  - dinoflagellate cysts
-  - acritarchs
-  - chitinozoans
-  - bacia potiguar
-  - formação alagamar
-  - alagamar formation
-  - potiguar basin
+  - '"Alagamar Formation"'
+  - '"Formação Alagamar"'
+  - '"Alagamar" "Potiguar Basin"'
+  - '"Alagamar" "Bacia Potiguar"'
+  - '"Potiguar Basin" "Aptian"'
+  - '"Bacia Potiguar" "Aptiano"'
+  - '"Potiguar Basin" "Aptian" "Albian"'
+  - '"Bacia Potiguar" "Aptiano" "Albiano"'
+  - '"Aptian-Albian" "Potiguar Basin"'
+  - '"Aptiano-Albiano" "Bacia Potiguar"'
+  - '"Post-rift" "Potiguar Basin"'
+  - '"Pós-Rifte" "Bacia Potiguar"'
+  - '"Upanema Member" "Alagamar"'
+  - '"Membro Upanema" "Alagamar"'
+  - '"Ponta do Tubarão" "Alagamar"'
+  - '"Camadas Ponta do Tubarão"'
+  - '"Galinhos Member" "Alagamar"'
+  - '"Membro Galinhos" "Alagamar"'
+  - '"Alagamar Formation" "palynology"'
+  - '"Formação Alagamar" "palinologia"'
+  - '"Potiguar Basin" "palynology"'
+  - '"Bacia Potiguar" "palinologia"'
+  - '"Alagamar Formation" "palynofacies"'
+  - '"Formação Alagamar" "palinofácies"'
+  - '"Potiguar Basin" "palynofacies"'
+  - '"Bacia Potiguar" "palinofácies"'
+  - '"palynofacies" "Aptian" "Brazil"'
+  - '"palinofácies" "Aptiano" "Brasil"'
+  - '"palynology" "biostratigraphy" "Cretaceous" "Brazil"'
+  - '"palinologia" "bioestratigrafia" "Cretáceo" "Brasil"'
+  - '"palynomorphs" "Aptian" "Brazil"'
+  - '"palinomorfos" "Aptiano" "Brasil"'
+  - '"marine palynomorphs" "Aptian"'
+  - '"palinomorfos marinhos" "Aptiano"'
+  - '"marine transgression" "Aptian" "Brazil"'
+  - '"transgressão marinha" "Aptiano" "Brasil"'
+  - '"marine incursion" "Potiguar Basin"'
+  - '"incursão marinha" "Bacia Potiguar"'
+  - '"Aptian-Albian" "marine transgression"'
+  - '"Aptiano-Albiano" "transgressão marinha"'
+  - '"paleoenvironmental reconstruction" "Potiguar Basin"'
+  - '"reconstrução paleoambiental" "Bacia Potiguar"'
+  - '"Alagamar Formation" "organic matter"'
+  - '"Formação Alagamar" "matéria orgânica"'
+  - '"Potiguar Basin" "organic geochemistry"'
+  - '"Bacia Potiguar" "geoquímica orgânica"'
+  - '"Potiguar Basin" "biomarkers"'
+  - '"Bacia Potiguar" "biomarcadores"'
+  - '"Alagamar Formation" "Rock-Eval"'
+  - '"Formação Alagamar" "Rock-Eval"'
+  - '"Potiguar Basin" "TOC" "Aptian"'
+  - '"Bacia Potiguar" "COT" "Aptiano"'
+  - '"thermal maturation" "Alagamar Formation"'
+  - '"maturação térmica" "Formação Alagamar"'
+  - '"amorphous organic matter" "palynofacies"'
+  - '"matéria orgânica amorfa" "palinofácies"'
+  - '"phytoclasts" "palynofacies"'
+  - '"fitoclastos" "palinofácies"'
+  - '"Brazilian Equatorial Margin" "Aptian" "Cretaceous"'
+  - '"margem equatorial brasileira" "Aptiano" "Cretáceo"'
+
+filters:
+  enabled: true
+  min_score: 7
+  require_anchor: true
+  anchor_keywords:
+    - Alagamar
+    - Alagamar Formation
+    - Formação Alagamar
+    - Potiguar Basin
+    - Bacia Potiguar
+    - Aptian
+    - Aptiano
+    - Albian
+    - Albiano
+    - Aptian-Albian
+    - Aptiano-Albiano
+    - Lower Cretaceous
+    - Cretáceo Inferior
+    - Early Cretaceous
+    - Upanema Member
+    - Membro Upanema
+    - Ponta do Tubarão
+    - Camadas Ponta do Tubarão
+    - Galinhos Member
+    - Membro Galinhos
+    - Canto do Amaro
+    - palynology
+    - palinologia
+    - paleopalynology
+    - paleopalinologia
+    - palaeopalynology
+    - palynofacies
+    - palinofácies
+    - palynomorph
+    - palynomorphs
+    - palinomorfo
+    - palinomorfos
+    - biostratigraphy
+    - bioestratigrafia
+    - organic facies
+    - fácies orgânica
+    - paleoenvironment
+    - paleoambiente
+  geology_keywords:
+    - stratigraphy
+    - estratigrafia
+    - chronostratigraphy
+    - cronoestratigrafia
+    - correlation
+    - correlação estratigráfica
+    - sedimentology
+    - sedimentologia
+    - sedimentary basin
+    - bacia sedimentar
+    - depositional system
+    - sistema deposicional
+    - tectono-sedimentary
+    - tectono-sedimentar
+    - post-rift
+    - pós-rifte
+    - marine transgression
+    - transgressão marinha
+    - marine incursion
+    - incursão marinha
+    - paleoecology
+    - paleoecologia
+    - paleoclimate
+    - paleoclima
+    - paleoenvironmental
+    - paleoambiental
+    - transitional environment
+    - ambiente transicional
+    - fluvio-deltaic
+    - flúvio-deltaico
+    - marine
+    - marinho
+    - spores
+    - esporos
+    - pollen
+    - pólen
+    - dinoflagellate cysts
+    - cistos de dinoflagelados
+    - acritarchs
+    - acritarcos
+    - phytoclasts
+    - fitoclastos
+    - amorphous organic matter
+    - matéria orgânica amorfa
+    - particulate organic matter
+    - matéria orgânica particulada
+    - sedimentary organic matter
+    - matéria orgânica sedimentar
+    - kerogen
+    - querogênio
+    - organic geochemistry
+    - geoquímica orgânica
+    - biomarkers
+    - biomarcadores
+    - total organic carbon
+    - carbono orgânico total
+    - TOC
+    - COT
+    - Rock-Eval
+    - pyrolysis
+    - pirólise
+    - thermal maturation
+    - maturação térmica
+    - source rock
+    - rocha geradora
+    - hydrocarbons
+    - hidrocarbonetos
+    - petroleum system
+    - sistema petrolífero
+    - micropaleontology
+    - micropaleontologia
+    - ostracods
+    - ostracodes
+    - inorganic-walled microfossils
+    - microfósseis de parede inorgânica
+  strong_geology_keywords:
+    - palynofacies
+    - palinofácies
+    - palynology
+    - palinologia
+    - biostratigraphy
+    - bioestratigrafia
+    - organic geochemistry
+    - geoquímica orgânica
+    - biomarkers
+    - biomarcadores
+    - TOC
+    - COT
+    - Rock-Eval
+    - thermal maturation
+    - marine transgression
+    - transgressão marinha
+    - marine incursion
+    - incursão marinha
+    - paleoenvironmental reconstruction
+    - reconstrução paleoambiental
+    - sedimentary organic matter
+    - matéria orgânica sedimentar
+    - inorganic-walled microfossils
+    - microfósseis de parede inorgânica
+  preferred_venues:
+    - Marine and Petroleum Geology
+    - Palaeogeography, Palaeoclimatology, Palaeoecology
+    - Cretaceous Research
+    - Journal of South American Earth Sciences
+    - Revista Brasileira de Paleontologia
+    - Review of Palaeobotany and Palynology
+    - Palynology
+    - Boletim de Geociências da Petrobras
+    - Brazilian Journal of Geology
+    - Journal of Petroleum Geology
+    - Organic Geochemistry
+    - Sedimentary Geology
+    - Marine Micropaleontology
+    - Micropaleontology
+  preferred_authors:
+    - Rodolfo Dino
+    - Marcelo de Araújo Carvalho
+    - Dermeval Aparecido do Carmo
+    - Do Carmo
+    - Pessoa Neto
+    - Spigolon
+    - Rodriguez
+  negative_keywords:
+    - education
+    - educational
+    - pedagogy
+    - teaching
+    - learning
+    - classroom
+    - students
+    - curriculum
+    - literacy
+    - school
+    - teacher training
+    - allergy
+    - allergic
+    - asthma
+    - aerobiology
+    - airborne pollen
+    - pollen allergy
+    - allergic rhinitis
+    - public health
+    - medicine
+    - medical
+    - nursing
+    - epidemiology
+    - agriculture
+    - agricultural
+    - crop
+    - crops
+    - maize
+    - corn
+    - wheat
+    - rice
+    - soybean
+    - pollination
+    - bee pollen
+    - honey
+    - plant breeding
+    - flowering plants
+    - psychology
+    - sociology
+    - economics
+    - machine learning
+    - artificial intelligence
+    - deep learning
+    - neural network
+    - computer science
+    - Mars
+    - Martian
+    - planetary
+    - exoplanet
 
 telegram:
   bot_token: ""
@@ -26,13 +293,13 @@ notification:
 sources:
   openalex:
     enabled: true
-    lookback_days: 3
+    lookback_days: 45
   crossref:
     enabled: true
-    lookback_days: 3
+    lookback_days: 45
   semantic_scholar:
     enabled: true
-    lookback_days: 3
+    lookback_days: 45
   arxiv:
-    enabled: true
-    lookback_days: 3
+    enabled: false
+    lookback_days: 7

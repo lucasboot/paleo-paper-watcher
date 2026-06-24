@@ -13,6 +13,18 @@ class NotificationConfig(BaseModel):
     max_items_per_message: int = 10
 
 
+class FiltersConfig(BaseModel):
+    enabled: bool = False
+    min_score: int = 0
+    require_anchor: bool = False
+    anchor_keywords: list[str] = Field(default_factory=list)
+    geology_keywords: list[str] = Field(default_factory=list)
+    strong_geology_keywords: list[str] = Field(default_factory=list)
+    preferred_venues: list[str] = Field(default_factory=list)
+    preferred_authors: list[str] = Field(default_factory=list)
+    negative_keywords: list[str] = Field(default_factory=list)
+
+
 class SourceConfig(BaseModel):
     enabled: bool = True
     lookback_days: int = 3
@@ -24,6 +36,7 @@ class AppConfig(BaseModel):
     queries: list[str] = Field(default_factory=list)
     telegram: TelegramConfig = Field(default_factory=TelegramConfig)
     notification: NotificationConfig = Field(default_factory=NotificationConfig)
+    filters: FiltersConfig = Field(default_factory=FiltersConfig)
     sources: dict[str, SourceConfig] = Field(default_factory=dict)
 
     def get_source_config(self, source_name: str) -> SourceConfig:
