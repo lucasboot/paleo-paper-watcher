@@ -1,19 +1,20 @@
 from __future__ import annotations
 
 import logging
-import os
 from typing import Any
 
 import httpx
 
 from src.models import Paper
 from src.sources.base import (
-    COMMON_HEADERS,
     DEFAULT_TIMEOUT_SECONDS,
+    SEMANTIC_SCHOLAR_POLICY,
     cutoff_date_for,
+    fetch_json_with_policy,
     filter_recent_papers,
     normalize_doi,
     parse_date,
+    semantic_scholar_headers,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -32,16 +33,6 @@ FIELDS = ",".join(
         "venue",
     ]
 )
-
-
-def _headers() -> dict[str, str]:
-    headers = dict(COMMON_HEADERS)
-    api_key = os.getenv("SEMANTIC_SCHOLAR_API_KEY", "").strip()
-    if api_key:
-        headers["x-api-key"] = api_key
-    return headers
-
-
 def _to_paper(item: dict[str, Any]) -> Paper:
     external_ids = item.get("externalIds") or {}
     doi = normalize_doi(external_ids.get("DOI"))
@@ -74,13 +65,17 @@ async def search(query: str, lookback_days: int, max_results: int) -> list[Paper
     }
 
     try:
-        async with httpx.AsyncClient(headers=_headers(), timeout=DEFAULT_TIMEOUT_SECONDS) as client:
-            response = await client.get(BASE_URL, params=params)
-            response.raise_for_status()
+        async with httpx.AsyncClient(headers=semantic_scholar_headers(), timeout=DEFAULT_TIMEOUT_SECONDS) as client:
+            payload = await fetch_json_with_policy(
+                client=client,
+                policy=SEMANTIC_SCHOLAR_POLICY,
+                url=BASE_URL,
+                params=params,
+            )
     except Exception as exc:
         LOGGER.warning("Semantic Scholar search failed for query=%r: %s", query, exc)
         return []
 
-    items = response.json().get("data", [])[:max_results]
+    items = payload.get("data", [])[:max_results]
     papers = [_to_paper(item) for item in items]
     return filter_recent_papers(papers, lookback_days)

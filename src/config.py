@@ -13,13 +13,32 @@ class NotificationConfig(BaseModel):
     max_items_per_message: int = 10
 
 
+class FilterNormalizationConfig(BaseModel):
+    remove_accents: bool = True
+
+
+class DirectThesisFilterConfig(BaseModel):
+    enabled: bool = True
+    min_score: int = 0
+    require_anchor: bool = True
+
+
+class MethodologicalAnalogFilterConfig(BaseModel):
+    enabled: bool = True
+    min_score: int = 0
+    min_methodological_terms: int = 3
+    require_geoscience_context: bool = True
+
+
 class FiltersConfig(BaseModel):
     enabled: bool = False
-    min_score: int = 0
-    require_anchor: bool = False
-    anchor_keywords: list[str] = Field(default_factory=list)
-    geology_keywords: list[str] = Field(default_factory=list)
-    strong_geology_keywords: list[str] = Field(default_factory=list)
+    normalize: FilterNormalizationConfig = Field(default_factory=FilterNormalizationConfig)
+    direct_thesis: DirectThesisFilterConfig = Field(default_factory=DirectThesisFilterConfig)
+    methodological_analog: MethodologicalAnalogFilterConfig = Field(default_factory=MethodologicalAnalogFilterConfig)
+    regional_keywords: list[str] = Field(default_factory=list)
+    temporal_keywords: list[str] = Field(default_factory=list)
+    methodological_keywords: list[str] = Field(default_factory=list)
+    geoscience_context_keywords: list[str] = Field(default_factory=list)
     preferred_venues: list[str] = Field(default_factory=list)
     preferred_authors: list[str] = Field(default_factory=list)
     negative_keywords: list[str] = Field(default_factory=list)

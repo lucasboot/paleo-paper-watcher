@@ -9,13 +9,14 @@ from src.models import Paper
 from src.notify import load_dotenv, send_messages
 from src.notify.telegram import get_chat_ids
 from src.normalize import dedupe_key
-from src.relevance import RelevanceDecision, evaluate_relevance
+from src.relevance import RelevanceDecision, evaluate_relevance, summarize_decision
 from src.state import load_seen_keys, save_seen_keys
 from src.sources import SOURCE_MODULES
+from src.sources.base import log_missing_source_configuration
 
 SOURCE_ORDER = ("openalex", "crossref", "semantic_scholar", "arxiv")
 SOURCE_CONCURRENCY = {
-    "openalex": 2,
+    "openalex": 1,
     "crossref": 1,
     "semantic_scholar": 1,
     "arxiv": 1,
@@ -106,8 +107,9 @@ def log_filtered_papers(filtered_papers: list[tuple[Paper, RelevanceDecision]]) 
         positive_text = "; ".join(decision.positive_reasons) if decision.positive_reasons else "nenhum"
         negative_text = "; ".join(decision.negative_reasons) if decision.negative_reasons else "nenhum"
         print(
-            f"FILTRADO: [{paper.source}] score={decision.score} | {paper.title} "
-            f"| positivos: {positive_text} | negativos: {negative_text}"
+            f"FILTRADO: [{paper.source}] direct_score={decision.direct_score} "
+            f"| methodological_score={decision.methodological_score} | categoria={decision.category} "
+            f"| {paper.title} | positivos: {positive_text} | negativos: {negative_text}"
         )
     print()
 
@@ -115,15 +117,14 @@ def log_filtered_papers(filtered_papers: list[tuple[Paper, RelevanceDecision]]) 
 def build_relevance_summaries(decisions_by_paper: dict[str, RelevanceDecision]) -> dict[str, str]:
     summaries: dict[str, str] = {}
     for paper_key, decision in decisions_by_paper.items():
-        main_reasons = (decision.positive_reasons + decision.negative_reasons)[:3]
-        reasons_text = "; ".join(main_reasons) if main_reasons else "sem termos destacados"
-        summaries[paper_key] = f"score {decision.score} | {reasons_text}"
+        summaries[paper_key] = summarize_decision(decision)
     return summaries
 
 
 async def main() -> None:
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s: %(message)s")
     load_dotenv(".env")
+    log_missing_source_configuration()
     config = load_config("config.yaml")
     seen_keys = load_seen_keys("data/seen.json")
 

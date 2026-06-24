@@ -67,14 +67,33 @@ queries:
 
 filters:
   enabled: true
-  min_score: 7
-  require_anchor: true
-  anchor_keywords:
+  normalize:
+    remove_accents: true
+  direct_thesis:
+    enabled: true
+    min_score: 7
+    require_anchor: true
+  methodological_analog:
+    enabled: true
+    min_score: 10
+    min_methodological_terms: 3
+    require_geoscience_context: true
+  regional_keywords:
     - Alagamar
     - Alagamar Formation
     - Formação Alagamar
     - Potiguar Basin
     - Bacia Potiguar
+    - Brazilian Equatorial Margin
+    - Margem Equatorial Brasileira
+    - Upanema Member
+    - Membro Upanema
+    - Ponta do Tubarão
+    - Camadas Ponta do Tubarão
+    - Galinhos Member
+    - Membro Galinhos
+    - Canto do Amaro
+  temporal_keywords:
     - Aptian
     - Aptiano
     - Albian
@@ -84,13 +103,7 @@ filters:
     - Lower Cretaceous
     - Cretáceo Inferior
     - Early Cretaceous
-    - Upanema Member
-    - Membro Upanema
-    - Ponta do Tubarão
-    - Camadas Ponta do Tubarão
-    - Galinhos Member
-    - Membro Galinhos
-    - Canto do Amaro
+  methodological_keywords:
     - palynology
     - palinologia
     - paleopalynology
@@ -104,72 +117,21 @@ filters:
     - palinomorfos
     - biostratigraphy
     - bioestratigrafia
-    - organic facies
-    - fácies orgânica
-    - paleoenvironment
-    - paleoambiente
-  geology_keywords:
-    - stratigraphy
-    - estratigrafia
-    - chronostratigraphy
-    - cronoestratigrafia
-    - correlation
-    - correlação estratigráfica
-    - sedimentology
-    - sedimentologia
-    - sedimentary basin
-    - bacia sedimentar
-    - depositional system
-    - sistema deposicional
-    - tectono-sedimentary
-    - tectono-sedimentar
-    - post-rift
-    - pós-rifte
-    - marine transgression
-    - transgressão marinha
-    - marine incursion
-    - incursão marinha
-    - paleoecology
-    - paleoecologia
-    - paleoclimate
-    - paleoclima
-    - paleoenvironmental
-    - paleoambiental
-    - transitional environment
-    - ambiente transicional
-    - fluvio-deltaic
-    - flúvio-deltaico
-    - marine
-    - marinho
-    - spores
-    - esporos
-    - pollen
-    - pólen
-    - dinoflagellate cysts
-    - cistos de dinoflagelados
-    - acritarchs
-    - acritarcos
-    - phytoclasts
-    - fitoclastos
-    - amorphous organic matter
-    - matéria orgânica amorfa
-    - particulate organic matter
-    - matéria orgânica particulada
-    - sedimentary organic matter
-    - matéria orgânica sedimentar
-    - kerogen
-    - querogênio
     - organic geochemistry
     - geoquímica orgânica
     - biomarkers
     - biomarcadores
-    - total organic carbon
-    - carbono orgânico total
+    - sedimentary organic matter
+    - matéria orgânica sedimentar
+    - particulate organic matter
+    - matéria orgânica particulada
+    - amorphous organic matter
+    - matéria orgânica amorfa
+    - phytoclasts
+    - fitoclastos
     - TOC
     - COT
     - Rock-Eval
-    - pyrolysis
-    - pirólise
     - thermal maturation
     - maturação térmica
     - source rock
@@ -178,37 +140,51 @@ filters:
     - hidrocarbonetos
     - petroleum system
     - sistema petrolífero
-    - micropaleontology
-    - micropaleontologia
-    - ostracods
-    - ostracodes
-    - inorganic-walled microfossils
-    - microfósseis de parede inorgânica
-  strong_geology_keywords:
-    - palynofacies
-    - palinofácies
-    - palynology
-    - palinologia
-    - biostratigraphy
-    - bioestratigrafia
-    - organic geochemistry
-    - geoquímica orgânica
-    - biomarkers
-    - biomarcadores
-    - TOC
-    - COT
-    - Rock-Eval
-    - thermal maturation
+    - paleoenvironmental reconstruction
+    - reconstrução paleoambiental
     - marine transgression
     - transgressão marinha
     - marine incursion
     - incursão marinha
-    - paleoenvironmental reconstruction
-    - reconstrução paleoambiental
-    - sedimentary organic matter
-    - matéria orgânica sedimentar
-    - inorganic-walled microfossils
-    - microfósseis de parede inorgânica
+    - sequence stratigraphy
+    - estratigrafia de sequências
+  geoscience_context_keywords:
+    - geology
+    - geologia
+    - geoscience
+    - geociências
+    - stratigraphy
+    - estratigrafia
+    - sedimentology
+    - sedimentologia
+    - sedimentary basin
+    - bacia sedimentar
+    - basin
+    - bacia
+    - formation
+    - formação
+    - shale
+    - folhelho
+    - carbonate
+    - carbonato
+    - source rock
+    - rocha geradora
+    - petroleum
+    - petróleo
+    - hydrocarbon
+    - hidrocarboneto
+    - paleoenvironment
+    - paleoambiente
+    - paleoclimate
+    - paleoclima
+    - paleontology
+    - paleontologia
+    - micropaleontology
+    - micropaleontologia
+    - organic matter
+    - matéria orgânica
+    - fossil
+    - fóssil
   preferred_venues:
     - Marine and Petroleum Geology
     - Palaeogeography, Palaeoclimatology, Palaeoecology
@@ -258,8 +234,11 @@ filters:
     - epidemiology
     - agriculture
     - agricultural
-    - crop
-    - crops
+    - crop yield
+    - crop production
+    - crop management
+    - agricultural crop
+    - farming
     - maize
     - corn
     - wheat

@@ -7,9 +7,12 @@ import httpx
 
 from src.models import Paper
 from src.sources.base import (
-    COMMON_HEADERS,
+    CROSSREF_POLICY,
     DEFAULT_TIMEOUT_SECONDS,
     cutoff_date_for,
+    crossref_headers,
+    crossref_params,
+    fetch_json_with_policy,
     filter_recent_papers,
     first_non_empty,
     normalize_doi,
@@ -79,18 +82,23 @@ async def search(query: str, lookback_days: int, max_results: int) -> list[Paper
         "sort": "published",
         "order": "desc",
     }
+    params.update(crossref_params())
 
     try:
         async with httpx.AsyncClient(
-            headers=COMMON_HEADERS,
+            headers=crossref_headers(),
             timeout=DEFAULT_TIMEOUT_SECONDS,
         ) as client:
-            response = await client.get(BASE_URL, params=params)
-            response.raise_for_status()
+            payload = await fetch_json_with_policy(
+                client=client,
+                policy=CROSSREF_POLICY,
+                url=BASE_URL,
+                params=params,
+            )
     except Exception as exc:
         LOGGER.warning("Crossref search failed for query=%r: %s", query, exc)
         return []
 
-    items = response.json().get("message", {}).get("items", [])
+    items = payload.get("message", {}).get("items", [])
     papers = [_to_paper(item) for item in items]
     return filter_recent_papers(papers, lookback_days)

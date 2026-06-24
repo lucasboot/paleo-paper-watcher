@@ -7,12 +7,15 @@ import httpx
 
 from src.models import Paper
 from src.sources.base import (
-    COMMON_HEADERS,
     DEFAULT_TIMEOUT_SECONDS,
+    OPENALEX_POLICY,
     cutoff_date_for,
+    fetch_json_with_policy,
     filter_recent_papers,
     normalize_doi,
+    openalex_params,
     parse_date,
+    common_headers,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -79,18 +82,23 @@ async def search(query: str, lookback_days: int, max_results: int) -> list[Paper
         "sort": "publication_date:desc",
         "per-page": max_results,
     }
+    params.update(openalex_params())
 
     try:
         async with httpx.AsyncClient(
-            headers=COMMON_HEADERS,
+            headers=common_headers(),
             timeout=DEFAULT_TIMEOUT_SECONDS,
         ) as client:
-            response = await client.get(BASE_URL, params=params)
-            response.raise_for_status()
+            payload = await fetch_json_with_policy(
+                client=client,
+                policy=OPENALEX_POLICY,
+                url=BASE_URL,
+                params=params,
+            )
     except Exception as exc:
         LOGGER.warning("OpenAlex search failed for query=%r: %s", query, exc)
         return []
 
-    results = response.json().get("results", [])
+    results = payload.get("results", [])
     papers = [_to_paper(item) for item in results]
     return filter_recent_papers(papers, lookback_days)

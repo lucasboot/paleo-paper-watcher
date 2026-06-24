@@ -8,8 +8,10 @@ import httpx
 
 from src.models import Paper
 from src.sources.base import (
-    COMMON_HEADERS,
+    ARXIV_POLICY,
     DEFAULT_TIMEOUT_SECONDS,
+    common_headers,
+    fetch_response_with_policy,
     filter_recent_papers,
     normalize_doi,
     parse_date,
@@ -84,11 +86,15 @@ async def search(query: str, lookback_days: int, max_results: int) -> list[Paper
 
     try:
         async with httpx.AsyncClient(
-            headers=COMMON_HEADERS,
+            headers=common_headers(),
             timeout=DEFAULT_TIMEOUT_SECONDS,
         ) as client:
-            response = await client.get(BASE_URL, params=params)
-            response.raise_for_status()
+            response = await fetch_response_with_policy(
+                client=client,
+                policy=ARXIV_POLICY,
+                url=BASE_URL,
+                params=params,
+            )
     except Exception as exc:
         LOGGER.warning("arXiv search failed for query=%r: %s", query, exc)
         return []

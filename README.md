@@ -47,19 +47,29 @@ queries:
 
 filters:
   enabled: true
-  min_score: 7
-  require_anchor: true
-  anchor_keywords:
+  normalize:
+    remove_accents: true
+  direct_thesis:
+    min_score: 7
+    require_anchor: true
+  methodological_analog:
+    min_score: 10
+    min_methodological_terms: 3
+    require_geoscience_context: true
+  regional_keywords:
     - Alagamar Formation
     - Potiguar Basin
+  methodological_keywords:
     - palynofacies
-  strong_geology_keywords:
     - organic geochemistry
     - Rock-Eval
-    - marine transgression
 ```
 
-`Semantic Scholar` aceita a variavel de ambiente opcional `SEMANTIC_SCHOLAR_API_KEY`.
+As fontes usam estas variaveis opcionais de ambiente:
+
+- `OPENALEX_API_KEY`: aumenta o limite diario do OpenAlex e reduz `429`.
+- `CROSSREF_MAILTO`: identifica o watcher no Crossref via `mailto` e `User-Agent`.
+- `SEMANTIC_SCHOLAR_API_KEY`: ajuda no suporte e evita throttling compartilhado no Semantic Scholar.
 
 ### Estrategia de queries
 
@@ -77,51 +87,51 @@ Prefira queries compostas com contexto geologico explicito. Evite termos abertos
 A secao `filters` funciona como uma segunda barreira antes das notificacoes:
 
 - `enabled`: liga ou desliga o pos-filtro.
-- `min_score`: score minimo para aprovacao.
-- `require_anchor`: exige ancora no caminho principal de aprovacao.
-- `anchor_keywords`: termos que indicam aderencia forte ao tema da tese.
-- `geology_keywords`: termos geologicos e de proxy detectados no artigo.
-- `strong_geology_keywords`: subconjunto usado na regra alternativa de aprovacao sem ancora.
+- `normalize.remove_accents`: controla a remocao de acentos no matching.
+- `direct_thesis`: regras do caminho de relacao direta com a tese.
+- `methodological_analog`: regras do caminho de analogos metodologicos.
+- `regional_keywords`: ancora espacial e estratigrafica direta.
+- `temporal_keywords`: ancora temporal do recorte da tese.
+- `methodological_keywords`: proxies e metodos centrais.
+- `geoscience_context_keywords`: contexto geologico exigido para analogos.
 - `preferred_venues`: periodicos que recebem bonus de score.
 - `preferred_authors`: autores recorrentes do tema que recebem bonus de score.
 - `negative_keywords`: termos que reduzem score e bloqueiam ruido.
 
-#### Regras de score
+#### Matching
 
-- `+8` se o titulo contem `Alagamar`, `Alagamar Formation`, `Formacao Alagamar`, `Potiguar Basin` ou `Bacia Potiguar`
-- `+6` se o resumo contem esses termos centrais
-- `+5` se o titulo contem `Upanema`, `Ponta do Tubarao`, `Galinhos` ou `Canto do Amaro`
-- `+5` se o titulo contem `palynofacies`, `palinofacies`, `palynology`, `palinologia` ou `palynomorphs`
-- `+3` se o resumo contem esses termos metodologicos
-- `+3` se o artigo contem `Aptian`, `Aptiano`, `Albian`, `Albiano`, `Lower Cretaceous` ou `Cretaceo Inferior`
-- `+2` se o artigo contem termos-alvo de geoquimica/proxy como `organic geochemistry`, `biomarkers`, `TOC`, `COT`, `Rock-Eval` ou `thermal maturation`
-- `+2` se o periodico estiver em `preferred_venues`
-- `+2` se algum autor estiver em `preferred_authors`
-- `-6` por `negative_keyword`
-- `-10` adicionais se houver termo negativo e nenhum `anchor_keyword`
+- termos de uma palavra usam match por fronteira de palavra.
+- siglas curtas como `TOC` e `COT` so contam como token isolado.
+- frases com varias palavras usam busca por frase normalizada.
+- `negative_keywords` usam a mesma regra estruturada e nao substring simples.
+- isso evita falsos positivos como `crop` em `outcrop`, `TOC` em `autocuidado` e `COT` em `contexto`.
 
-#### Regra final de aprovacao
+#### Categorias de aprovacao
 
-Um artigo e aprovado quando:
+`direct_thesis_relevance`:
 
-- `score >= min_score`
-- e tem pelo menos uma `anchor_keyword`
+- exige score minimo em `direct_thesis.min_score`
+- exige ancora regional ou temporal
+- prioriza trabalhos diretamente ligados a Alagamar, Potiguar, Aptiano-Albiano e unidades correlatas
 
-Ou, alternativamente:
+`methodological_analog`:
 
-- `score >= min_score`
-- tem pelo menos duas `strong_geology_keywords`
-- e nao tem `negative_keyword`
+- permite aprovacao sem citar Potiguar ou Alagamar
+- exige score minimo em `methodological_analog.min_score`
+- exige pelo menos `min_methodological_terms` distintos
+- exige contexto geocientifico quando `require_geoscience_context=true`
+- foi pensado para artigos como palinofacies, geoquimica organica, TOC/COT, Rock-Eval, biomarcadores e rochas geradoras em outras bacias ou idades
 
-Com `require_anchor: true`, o caminho principal continua exigindo ancora. A excecao e apenas a regra alternativa acima.
+Quando ambos passam, o sistema prioriza `direct_thesis_relevance`.
 
 ### Calibragem pratica
 
 Use os logs dos artigos filtrados para ajustar:
 
-- `min_score`: normalmente entre `6` e `10`
-- `anchor_keywords`: para ampliar ou fechar aderencia ao tema
-- `strong_geology_keywords`: para controlar o caminho alternativo sem ancora
+- `direct_thesis.min_score`: normalmente entre `6` e `10`
+- `methodological_analog.min_score`: normalmente entre `9` e `12`
+- `methodological_analog.min_methodological_terms`: controla o rigor dos analogos
+- `regional_keywords`, `temporal_keywords` e `methodological_keywords`: para abrir ou fechar o funil
 - `negative_keywords`: para bloquear ruido recorrente de educacao, saude, agricultura ou ciencia planetaria
 
 ## Telegram
@@ -139,11 +149,20 @@ Crie um arquivo `.env` na raiz do projeto:
 ```env
 TELEGRAM_BOT_TOKEN=seu_token
 TELEGRAM_CHAT_IDS=5291018127,-1001234567890
+OPENALEX_API_KEY=sua_chave_openalex
+CROSSREF_MAILTO=seu-email@dominio.com
+SEMANTIC_SCHOLAR_API_KEY=sua_chave_semantic_scholar
 ```
 
 Use `TELEGRAM_CHAT_IDS` com ids separados por virgula. O mesmo conjunto de artigos sera enviado para todos os chats, e um paper so sera marcado como notificado quando todos os chats da lista receberem a mensagem com sucesso.
 
-Cada artigo aprovado inclui uma linha resumida de relevancia no Telegram com score e motivos principais da selecao.
+Cada artigo aprovado inclui uma linha resumida de relevancia no Telegram com categoria, score e motivos principais da selecao.
+
+## APIs e limites
+
+- OpenAlex: usa `OPENALEX_API_KEY` como `api_key` na query string. Sem chave, o limite diario gratuito e menor. O watcher aplica retry com backoff e pacing conservador.
+- Crossref: nao usa API key no REST publico. O watcher envia `mailto` e `User-Agent` identificavel quando `CROSSREF_MAILTO` estiver configurado, com retry e pacing conservador.
+- Semantic Scholar: usa `SEMANTIC_SCHOLAR_API_KEY` no header `x-api-key`. O watcher limita as chamadas a um ritmo conservador de `1` request por vez com backoff em `429` e `5xx`.
 
 ## GitHub Actions
 
@@ -163,7 +182,9 @@ No repositorio do GitHub:
 3. Crie os secrets:
 4. `TELEGRAM_BOT_TOKEN`
 5. `TELEGRAM_CHAT_IDS`
-6. `SEMANTIC_SCHOLAR_API_KEY` (opcional, mas recomendado para reduzir rate limit)
+6. `OPENALEX_API_KEY` (recomendado para reduzir `429` e ampliar o limite diario)
+7. `CROSSREF_MAILTO` (recomendado para usar o pool identificado do Crossref)
+8. `SEMANTIC_SCHOLAR_API_KEY` (recomendado para reduzir throttling compartilhado)
 
 ### Rodar manualmente no GitHub
 
