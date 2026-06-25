@@ -272,13 +272,13 @@ notification:
 sources:
   openalex:
     enabled: true
-    lookback_days: 45
+    lookback_days: 10
   crossref:
     enabled: true
-    lookback_days: 45
+    lookback_days: 10
   semantic_scholar:
     enabled: true
-    lookback_days: 45
+    lookback_days: 10
   arxiv:
     enabled: false
     lookback_days: 7

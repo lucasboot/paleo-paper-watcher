@@ -166,9 +166,9 @@ Cada artigo aprovado inclui uma linha resumida de relevancia no Telegram com cat
 
 ## GitHub Actions
 
-O workflow diario fica em [.github/workflows/daily.yml](/home/lucas-alves/Documents/paleo-paper-watcher/.github/workflows/daily.yml) e roda:
+O workflow semanal fica em [.github/workflows/weekly.yml](/home/lucas-alves/Documents/paleo-paper-watcher/.github/workflows/weekly.yml) e roda:
 
-- automaticamente todos os dias as `11:00 UTC`
+- automaticamente toda segunda-feira as `11:00 UTC`
 - manualmente via `workflow_dispatch`
 
 No fuso `America/Fortaleza (UTC-3)`, `11:00 UTC` corresponde a `08:00`.
@@ -189,7 +189,7 @@ No repositorio do GitHub:
 ### Rodar manualmente no GitHub
 
 1. Abra a aba `Actions`.
-2. Selecione `Daily Paleo Paper Watcher`.
+2. Selecione `Weekly Paleo Paper Watcher`.
 3. Clique em `Run workflow`.
 4. Escolha a branch e execute.
 

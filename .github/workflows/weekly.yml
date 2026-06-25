@@ -1,8 +1,8 @@
-name: Daily Paleo Paper Watcher
+name: Weekly Paleo Paper Watcher
 
 on:
   schedule:
-    - cron: "0 11 * * *"
+    - cron: "0 11 * * 1"
   workflow_dispatch:
 
 permissions:
